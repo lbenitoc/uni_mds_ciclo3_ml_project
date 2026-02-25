@@ -71,7 +71,7 @@ Se implementó:
 ```
 data/training/boston_training.csv
 ```
-
+![Diccionario de Datos](./resources/images/data_dictionary.png)
 ---
 
 ## 🔹 2. Model Training
@@ -103,11 +103,11 @@ housing_price_model (v1)
 
 ## 🔎 Vista del experimento
 
-![MLflow Overview](./docs/mlflow_overview.png)
+![MLflow Overview](./resources/images/mlflow_overview.png)
 
 ## 📊 Métricas del modelo
 
-![MLflow Metrics](./docs/mlflow_metrics.png)
+![MLflow Metrics](./resources/images/mlflow_metrics.png)
 
 ---
 
@@ -188,7 +188,7 @@ Ejemplo de salida esperada:
   "predictions": [24.9]
 }
 ```
-
+![MLflow Predict](./resources/images/mlflow_predict.png)
 ---
 
 ## 📡 Flujo completo para usar el modelo

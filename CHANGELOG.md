@@ -1,8 +1,4 @@
 # CHANGELOG
 
 ## v0.1.0
-(List your features here):
-(You can create a git tag (v0.1.0) when merged into main branch via a PR )
-- ...
-- ...
-- ...
+* Build final project of MLOps subject.
