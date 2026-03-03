@@ -27,6 +27,7 @@ and model serving.
 # 📊 2. Dataset
 
 We used the Boston Housing dataset.
+
 ![Data Dictionary](/resources/images/data_dictionary.png)
 
 ## Selected Features
@@ -102,7 +103,8 @@ Best hyperparameters:
 -   **RMSE:** 3.1283\
 -   **MAPE:** 13.53%\
 -   **R²:** 0.8319
-![Metrics Model](resources\images\mlflow_metrics.png)
+
+![Metrics Model](/resources/images/mlflow_metrics.png)
 
 ### 📈 Improvement vs Baseline
 
@@ -130,7 +132,7 @@ MLflow (v3.1.0) was used for:
 -   Model artifact storage
 -   Model registry
 
-![MLflow Overview](resources/images/mlflow_overview.png)
+![MLflow Overview](/resources/images/mlflow_overview.png)
 
 Registered model:
 housing_price_model (v1)
@@ -196,7 +198,7 @@ Response:
 
 { "predictions": \[24.9\] }
 
-![Prediction](resources\images\mlflow_predict.png)
+![Prediction](/resources/images/mlflow_predict.png)
 
 The model successfully generates predictions through the API.
 
