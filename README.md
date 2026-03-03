@@ -1,273 +1,254 @@
-# MLOps Introduction: Final Project
-FInal work description in  the [final_project_description.md](final_project_description.md) file.
+# 🏠 Housing Price Prediction -- MLOps Final Project
 
-Student info:
-- Full name: Luis Fernando Benito Chavez
-- e-mail: lbenitoc@uni.pe
-- Grupo: Individual
+**Course:** Introduction to MLOps\
+**Program:** UNI -- MDS Ciclo 3\
+**Author:** Luis Benito Chavez\
+**Year:** 2026
 
-# Project Name: Housing Price Prediction – MLOps Final Project
+------------------------------------------------------------------------
 
-# A) Problem Definition
+# 📌 1. Problem Definition
 
-## Context
+## 🎯 Use Case
 
-La estimación del precio de viviendas es un problema central en el mercado inmobiliario. Una predicción precisa permite:
+The objective of this project is to develop a Machine Learning model
+capable of predicting housing prices based on structural and
+socio-economic characteristics.
 
-* 🏦 Entidades financieras evaluar riesgos crediticios
-* 🏘 Inmobiliarias definir estrategias de pricing
-* 👨‍👩‍👧‍👦 Compradores tomar decisiones informadas
-* 📊 Analistas evaluar dinámicas del mercado
+Potential applications include: - Real estate agencies - Mortgage
+evaluation in banks - Investment analysis - Property valuation platforms
 
-En este proyecto se desarrolla un modelo de Machine Learning capaz de predecir el precio medio de viviendas (`medv`) en función de variables estructurales y socioeconómicas.
+The project follows the complete Machine Learning Lifecycle and
+integrates MLOps practices such as experiment tracking, model registry,
+and model serving.
 
-El problema se formula como:
+------------------------------------------------------------------------
 
-> **Problema de regresión supervisada**
-> Predecir el valor medio de viviendas ocupadas por sus propietarios (en miles de dólares).
+# 📊 2. Dataset
 
----
+We used the Boston Housing dataset.
+![Data Dictionary](/resources/images/data_dictionary.png)
 
-## 🎯 Variable objetivo
+## Selected Features
 
-* `medv` → Precio medio de la vivienda
+After exploratory data analysis and correlation review in the
+experimentation notebook, the following five variables were selected:
 
-## 🔎 Variables predictoras seleccionadas
+-   **lstat**: Percentage of lower status population\
+-   **rm**: Average number of rooms per dwelling\
+-   **dis**: Distance to employment centers\
+-   **crim**: Crime rate\
+-   **nox**: Nitric oxides concentration
 
-Tras análisis exploratorio y selección de importancia:
+### Why only these 5 variables?
 
-* `lstat`
-* `rm`
-* `dis`
-* `crim`
-* `nox`
+-   They showed strong correlation with the target variable (price).
+-   They reduced multicollinearity issues.
+-   They provided a balance between model simplicity and predictive
+    performance.
+-   Feature selection experiments showed no significant improvement when
+    including all original variables.
 
----
+Target variable: - **price** (median house value)
 
-# 📊 Enfoque del Proyecto
+------------------------------------------------------------------------
 
-El proyecto fue desarrollado siguiendo principios MLOps:
+# 🔬 3. ML Experimentation
 
-```
-data/
-src/
-models/
-notebooks/
-```
+## 📏 Evaluation Metrics
 
----
+The following regression metrics were evaluated:
 
-## 🔹 1. Data Preparation
+-   **MAE (Mean Absolute Error)** → average absolute prediction error
+-   **RMSE (Root Mean Squared Error)** → penalizes large errors
+-   **MAPE (Mean Absolute Percentage Error)** → relative percentage
+    error
+-   **R² (Coefficient of Determination)** → variance explained by the
+    model
 
-Archivo: `src/data_preparation.py`
+------------------------------------------------------------------------
 
-Se implementó:
+## 📌 Baseline Model
 
-* Eliminación del campo `ID`
-* Truncamiento de outliers mediante IQR
-* Selección de 5 variables más importantes
-* Generación del dataset procesado en:
+A simple baseline model was trained before hyperparameter tuning.
 
-```
-data/training/boston_training.csv
-```
-![Diccionario de Datos](./resources/images/data_dictionary.png)
----
+Baseline (Decision Tree default parameters):
 
-## 🔹 2. Model Training
+-   R² = 0.691\
+-   MAE = 3.331\
+-   MAPE = 16.01%\
+-   RMSE = 5.270
 
-Archivo: `src/train.py`
+This established the minimum acceptable performance threshold.
 
-Se implementó:
+------------------------------------------------------------------------
 
-* `DecisionTreeRegressor`
-* Optimización con `GridSearchCV`
-* Evaluación con:
+## 🏆 Champion Model
 
-  * MAE
-  * RMSE
-  * MAPE
-  * R²
-* Registro del experimento en MLflow
-* Registro del modelo en MLflow Model Registry
+After applying GridSearchCV, the best model was:
 
----
+### Decision Tree Regressor (GridSearch)
 
-# 📈 Registro en MLflow
+Best hyperparameters:
 
-Modelo registrado:
+-   max_depth = 5\
+-   min_samples_split = 10\
+-   min_samples_leaf = 4\
+-   max_features = None
 
-```
+### 📊 Champion Model Performance
+
+-   **MAE:** 2.3185\
+-   **RMSE:** 3.1283\
+-   **MAPE:** 13.53%\
+-   **R²:** 0.8319
+![Metrics Model](resources\images\mlflow_metrics.png)
+
+### 📈 Improvement vs Baseline
+
+| Metric | Baseline | Champion | Improvement |
+|--------|----------|----------|-------------|
+| R²     | 0.691    | 0.8319   | ↑ |
+| MAE    | 3.331    | 2.3185   | ↓ |
+| MAPE   | 16.01%   | 13.53%   | ↓ |
+| RMSE   | 5.270    | 3.1283   | ↓ |
+
+The tuned model explains approximately 83% of the variance in housing
+prices and significantly reduces prediction error.
+
+This justified selecting it as the production model.
+
+------------------------------------------------------------------------
+
+# 🔁 4. MLflow Tracking & Model Registry
+
+MLflow (v3.1.0) was used for:
+
+-   Experiment tracking
+-   Parameter logging
+-   Metric logging
+-   Model artifact storage
+-   Model registry
+
+![MLflow Overview](resources/images/mlflow_overview.png)
+
+Registered model:
 housing_price_model (v1)
-```
 
-## 🔎 Vista del experimento
+MLflow allows full reproducibility of experiments through run IDs and
+artifact tracking.
 
-![MLflow Overview](./resources/images/mlflow_overview.png)
+------------------------------------------------------------------------
 
-## 📊 Métricas del modelo
+# 🏗 5. ML Development
 
-![MLflow Metrics](./resources/images/mlflow_metrics.png)
+## 📌 Data Preparation
 
----
+-   Raw dataset stored in `/data/raw/`
+-   Processed dataset stored in `/data/training/`
+-   Transformations implemented in `src/data_preparation.py`
 
-# 🚀 Manual de Uso del Modelo
+Includes: - Feature selection - Train/test split - Dataset structuring
 
----
+------------------------------------------------------------------------
 
-# 1️⃣ Ejecutar MLflow UI
+## 🏋 Model Training
 
-Desde la raíz del proyecto:
+Implemented in `src/train.py`.
 
-```bash
-mlflow ui
-```
+Includes:
 
-Abrir en el navegador:
+-   GridSearchCV
+-   MLflow logging
+-   Model serialization (.pkl)
+-   Model registration in MLflow
 
-```
-http://127.0.0.1:5000
-```
+Serialized model saved as:
 
-Ahí se pueden visualizar:
+models/housing_price_model.pkl
 
-* Experimentos
-* Métricas
-* Parámetros
-* Artefactos
-* Versiones del modelo
+------------------------------------------------------------------------
 
----
+# 🚀 6. Model Deployment & Serving
 
-# 2️⃣ Servir el Modelo
+Serving strategy: REST API using FastAPI.
 
-Archivo: `src/serving.py`
+File: src/serving.py
 
-Este archivo ejecuta internamente:
+Server launched with:
 
-```bash
-mlflow models serve
-```
+uvicorn src.serving:app --reload
 
-Para levantar el servidor:
+Endpoint:
 
-```bash
-python src/serving.py
-```
+POST http://127.0.0.1:5001/invocations
 
-Servidor disponible en:
+------------------------------------------------------------------------
 
-```
-http://127.0.0.1:5001
-```
+# 🔮 7. Inference Example
 
----
+Request:
 
-# 3️⃣ Realizar Predicciones (usando predict.py)
+{ "dataframe_split": { "columns": \["lstat","rm","dis","crim","nox"\],
+"data": \[\[4.98,6.575,4.09,0.00632,0.538\]\] } }
 
-No es necesario ejecutar curl manualmente.
+Response:
 
-El archivo `src/predict.py` permite enviar solicitudes automáticamente al modelo servido.
+{ "predictions": \[24.9\] }
 
-Ejecutar:
+![Prediction](resources\images\mlflow_predict.png)
 
-```bash
-python src/predict.py
-```
+The model successfully generates predictions through the API.
 
-Internamente, este script:
+------------------------------------------------------------------------
 
-* Construye el JSON requerido por MLflow
-* Envía solicitud POST a `/invocations`
-* Devuelve la predicción en consola
+# 🔄 8. ML Lifecycle Coverage
 
-Ejemplo de salida esperada:
+This project covers:
 
-```json
-{
-  "predictions": [24.9]
-}
-```
-![MLflow Predict](./resources/images/mlflow_predict.png)
----
+1.  Problem definition\
+2.  Data acquisition\
+3.  Experimentation\
+4.  Model training\
+5.  Model tracking\
+6.  Model registry\
+7.  Deployment\
+8.  Serving & inference
 
-## 📡 Flujo completo para usar el modelo
+------------------------------------------------------------------------
 
-1️⃣ Preparar datos
+# 📌 9. Conclusions
 
-```bash
-python src/data_preparation.py
-```
+-   Hyperparameter tuning significantly improved performance.
+-   MLflow ensured reproducibility and experiment traceability.
+-   Modular structure supports maintainability.
+-   API deployment demonstrates production readiness.
 
-2️⃣ Entrenar modelo y registrar en MLflow
+------------------------------------------------------------------------
 
-```bash
-python src/train.py
-```
+# ⚠️ 10. Limitations
 
-3️⃣ Visualizar experimento
+-   Small dataset
+-   No advanced ensemble models evaluated
+-   No containerization (Docker)
+-   No cloud deployment
 
-```bash
-mlflow ui
-```
+------------------------------------------------------------------------
 
-4️⃣ Servir modelo
+# 🚀 11. Future Improvements
 
-```bash
-python src/serving.py
-```
+-   Implement Random Forest or XGBoost
+-   Add CI/CD pipeline
+-   Dockerize the application
+-   Deploy to cloud
+-   Implement monitoring
+-   Automate pipeline with orchestration tools
 
-5️⃣ Generar predicción
+------------------------------------------------------------------------
 
-```bash
-python src/predict.py
-```
+# 🧠 Lessons Learned
 
----
-
-# 🏗 Arquitectura del Proyecto
-
-```
-data/
-    raw/
-    training/
-
-src/
-    data_preparation.py
-    train.py
-    serving.py
-    predict.py
-
-models/
-notebooks/
-```
-
----
-
-# 🧠 Modelo Final
-
-* Algoritmo: Decision Tree Regressor
-* Optimización: GridSearchCV
-* Registro: MLflow
-* Versionado: MLflow Model Registry
-* Serving: MLflow Model Serving
-* Tipo: Regresión supervisada
-
----
-
-# 📌 Conclusión
-
-En este proyecto se implementó un pipeline completo bajo enfoque MLOps:
-
-✔ Separación clara entre preparación, entrenamiento y serving
-✔ Registro reproducible de experimentos
-✔ Versionado formal del modelo
-✔ Servicio REST listo para producción
-✔ Script dedicado para generación de predicciones
-
-El modelo puede integrarse fácilmente en:
-
-* Aplicaciones web
-* Sistemas financieros
-* Plataformas inmobiliarias
-* APIs externas
+-   Importance of experiment tracking
+-   Model selection based on metrics comparison
+-   Difference between training code and serving code
+-   Reproducibility in MLOps workflows
